@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from app.repository.user_repo import create_user_repo, get_user_repo, edit_user_repo, delete_user_repo, get_user_by_email_repo, get_user_by_username_repo
+from app.repository.user_repo import create_user_repo, get_user_repo, edit_user_repo, delete_user_repo, get_user_by_email_repo, get_user_by_username_repo, get_users_pagination_repo
 from app.schema.User import UserCreate, UserResponse, EditUser
 from fastapi import HTTPException
 from sqlalchemy.exc import IntegrityError
@@ -56,3 +56,20 @@ def edit_user_services(db: Session, person_id: UUID, user: EditUser):
 
 def delete_user_services(db: Session, user_id: UUID):
     return delete_user_repo(db, user_id)
+
+def delete_user_pagination_services(db: Session, skip: int, limit: int):
+    users = get_users_pagination_repo(db, skip, limit)
+
+    if users is None:
+        raise HTTPException(
+            status_code=404,
+            detail="no person found"
+        )
+    
+    if users == []:
+        raise HTTPException(
+            status_code=404,
+            detail="no person found"
+        )
+    
+    return users

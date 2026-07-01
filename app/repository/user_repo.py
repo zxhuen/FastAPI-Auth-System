@@ -53,3 +53,11 @@ def get_user_by_email_repo(db: Session, user_email: str):
 
 def get_user_by_username_repo(db: Session, user_username: str):
     user = db.query(User).filter(User.username == user_username).first()
+
+def get_users_pagination_repo(db: Session, skip: int, limit: int):
+    return (
+        db.query(User)
+        .offset(skip)
+        .limit(limit)
+        .all()
+    )
