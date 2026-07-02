@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
-from app.repository.user_repo import create_user_repo, get_user_repo, edit_user_repo, delete_user_repo, get_user_by_email_repo, get_user_by_username_repo, get_users_pagination_repo
-from app.schema.User import UserCreate, UserResponse, EditUser
+from app.repository.user_repo import create_user_repo, get_user_repo, edit_user_repo, delete_user_repo, get_user_by_email_repo, get_user_by_username_repo, get_users_pagination_repo, login_repo
+from app.schema.User import UserCreate, UserResponse, EditUser, user_login
 from fastapi import HTTPException
 from sqlalchemy.exc import IntegrityError
 from pwdlib import PasswordHash
@@ -73,3 +73,21 @@ def delete_user_pagination_services(db: Session, skip: int, limit: int):
         )
     
     return users
+
+def login_services(db: Session, account: user_login):
+    user = login_repo(db, account.username)
+
+    if user is None:
+        raise HTTPException(
+            status_code=401,
+            detail="Invalid credentials"
+        )
+    
+    if not password_hash.verify(account.password, user.hashed_password):
+        raise HTTPException(
+            status_code=401,
+            detail="Invalid credentials"
+        )
+
+    return user
+    

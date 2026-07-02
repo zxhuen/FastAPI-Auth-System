@@ -2,6 +2,9 @@ from sqlalchemy.orm import Session
 from app.models.User import User
 from app.schema.User import UserCreate, UserResponse, EditUser
 from uuid import UUID
+from pwdlib import PasswordHash
+
+password_hash = PasswordHash.recommended()
 
 def create_user_repo(db: Session, Users: User):
     
@@ -61,3 +64,7 @@ def get_users_pagination_repo(db: Session, skip: int, limit: int):
         .limit(limit)
         .all()
     )
+
+
+def login_repo(db: Session, username: str):
+    return db.query(User).filter(User.username == username).first()

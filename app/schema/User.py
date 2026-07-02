@@ -27,3 +27,7 @@ class EditUser(BaseModel):
         pattern=r"^[a-zA-Z0-9_]+$"
     )
     email: EmailStr
+
+class user_login(BaseModel):
+    username: str
+    password: str

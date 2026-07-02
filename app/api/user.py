@@ -1,8 +1,8 @@
 from fastapi import APIRouter, HTTPException, Depends
 from sqlalchemy.orm import Session
 from app.core.database import get_db
-from app.schema.User import UserCreate, UserResponse, EditUser
-from app.services.user_services import add_user_services, list_user_services, edit_user_services, delete_user_services, delete_user_pagination_services
+from app.schema.User import UserCreate, UserResponse, EditUser, user_login
+from app.services.user_services import add_user_services, list_user_services, edit_user_services, delete_user_services, delete_user_pagination_services, login_services
 from uuid import UUID
 
 router = APIRouter(prefix="/User", tags=["User"])
@@ -42,4 +42,8 @@ def delete_user(user_id: UUID, db: Session = Depends(get_db)):
 @router.get("/pagination", response_model=list[UserResponse])
 def get_users_pagination(skip: int, limit: int, db: Session = Depends(get_db)):
     return delete_user_pagination_services(db, skip, limit)
+
+@router.post("/Login", response_model=UserResponse)
+def validate_account(account: user_login, db: Session = Depends(get_db)):
+    return login_services(db, account)
     
