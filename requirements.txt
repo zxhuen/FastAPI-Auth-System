@@ -16,3 +16,5 @@ email-validator
 pwdlib[argon2]
 
 python-jose==3.5.0
+
+python-multipart
