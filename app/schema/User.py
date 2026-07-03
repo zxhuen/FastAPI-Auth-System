@@ -1,4 +1,4 @@
-from pydantic import BaseModel, EmailStr, Field 
+from pydantic import BaseModel, EmailStr, ConfigDict, Field 
 from uuid import UUID
 class UserCreate(BaseModel):
     username: str = Field(
@@ -31,3 +31,21 @@ class EditUser(BaseModel):
 class user_login(BaseModel):
     username: str
     password: str
+
+class RoleResponse(BaseModel):
+    id: int
+    name: str
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class current_user(BaseModel):
+    id: UUID
+    username: str
+    email: EmailStr
+    role: RoleResponse
+
+    class Config:
+        from_attributes = True
+
+

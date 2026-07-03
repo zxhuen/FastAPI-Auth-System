@@ -3,6 +3,7 @@ from app.models.User import User
 from app.schema.User import UserCreate, UserResponse, EditUser
 from uuid import UUID
 from pwdlib import PasswordHash
+from sqlalchemy.orm import joinedload
 
 password_hash = PasswordHash.recommended()
 
@@ -68,3 +69,18 @@ def login_repo(db: Session, username: str):
 
 def find_user_ID_repo(db: Session, user_id: UUID):
     return db.query(User).filter(User.id == user_id).first()
+
+def get_current_user_repo(db: Session, user_id: UUID):
+    current_user = (
+    db.query(User)
+    .options(joinedload(User.role))
+    .filter(User.id == user_id)
+    .first()
+    )
+
+
+    if current_user is None:
+        return None
+
+    
+    return current_user

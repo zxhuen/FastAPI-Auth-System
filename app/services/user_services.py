@@ -1,12 +1,13 @@
 from sqlalchemy.orm import Session
-from app.repository.user_repo import create_user_repo, get_user_repo, edit_user_repo, delete_user_repo, get_user_by_email_repo, get_user_by_username_repo, get_users_pagination_repo, login_repo, find_user_ID_repo
+from app.repository.user_repo import create_user_repo, get_user_repo, edit_user_repo, delete_user_repo, get_user_by_email_repo, get_user_by_username_repo, get_users_pagination_repo, login_repo, find_user_ID_repo, get_current_user_repo
 from app.schema.User import UserCreate, UserResponse, EditUser, user_login
 from fastapi import HTTPException
 from sqlalchemy.exc import IntegrityError
 from pwdlib import PasswordHash
 from app.models.User import User
 from uuid import UUID
-from app.services.auth_services import create_access_token
+from app.services.auth_services import create_access_token, decode_access_token
+
 
 
 
@@ -124,6 +125,22 @@ def find_user_id_services(db: Session, user_id: UUID):
         )
     
     return user
+
+def get_current_user_session(db: Session, token: str):
+    validated_token = decode_access_token(token)
+    current_user = get_current_user_repo(db, validated_token['sub'])
+
+   
+
+    if current_user is None:
+        raise HTTPException(
+            status_code=401,
+            detail="User not found"
+        )
+    
+    return current_user
+
+
     
 
 
