@@ -17,7 +17,11 @@ def create_user_repo(db: Session, Users: User):
     return Users
 
 def get_user_repo(db: Session):
-    return db.query(User).all()
+    return  (
+    db.query(User)
+    .options(joinedload(User.role))
+    .first()
+    )
 
 def edit_user_repo(db: Session, user_id: UUID, Users: EditUser):
     user_from_db = (
@@ -53,7 +57,7 @@ def get_user_by_email_repo(db: Session, user_email: str):
     return user
 
 def get_user_by_username_repo(db: Session, user_username: str):
-    user = db.query(User).filter(User.username == user_username).first()
+    return db.query(User).filter(User.username == user_username).first()
 
 def get_users_pagination_repo(db: Session, skip: int, limit: int):
     return (

@@ -35,6 +35,7 @@ def add_user_services(db: Session, Create: UserCreate):
         hashed_password = hash_password(Create.hashed_password)
         
         new_user = User(
+            role_id = 2,
             username = Create.username,
             email = Create.email,
             hashed_password = hashed_password

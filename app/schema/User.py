@@ -1,5 +1,13 @@
 from pydantic import BaseModel, EmailStr, ConfigDict, Field 
 from uuid import UUID
+
+
+class RoleResponse(BaseModel):
+    id: int
+    name: str
+
+    model_config = ConfigDict(from_attributes=True)
+
 class UserCreate(BaseModel):
     username: str = Field(
         min_length=5,
@@ -14,8 +22,10 @@ class UserCreate(BaseModel):
 
 class UserResponse(BaseModel):
     id: UUID
+    role: RoleResponse
     username: str
     email: EmailStr
+
 
     class Config:
         from_attributes = True
@@ -32,11 +42,7 @@ class user_login(BaseModel):
     username: str
     password: str
 
-class RoleResponse(BaseModel):
-    id: int
-    name: str
 
-    model_config = ConfigDict(from_attributes=True)
 
 
 class current_user(BaseModel):

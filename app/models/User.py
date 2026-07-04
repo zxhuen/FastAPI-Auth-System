@@ -9,7 +9,7 @@ class User(Base):
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
 
-    role_id = Column(Integer, ForeignKey("roles.id"), nullable=True)
+    role_id = Column(Integer, ForeignKey("roles.id"), nullable=False)
     role = relationship("Role", back_populates="users")
 
     username = Column(String(20), unique=True, nullable=False)

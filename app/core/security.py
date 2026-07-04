@@ -1,3 +1,3 @@
 from fastapi.security import OAuth2PasswordBearer
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/User/OauthLogin")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/User/LoginOauth")

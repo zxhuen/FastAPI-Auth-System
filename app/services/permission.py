@@ -4,7 +4,7 @@ from app.services.user_services import get_current_user_session
 from app.core.security import oauth2_scheme
 from app.core.database import get_db
 
-def user_role_validation(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
+def require_admin(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
     current_user = get_current_user_session(db, token)
 
     role = current_user.role.name
