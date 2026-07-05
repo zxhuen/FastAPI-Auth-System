@@ -16,4 +16,18 @@ def require_admin(token: str = Depends(oauth2_scheme), db: Session = Depends(get
         )
     
     return role
+
+
+def require_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
+    current_user = get_current_user_session(db, token)
+
+    role = current_user.role.name
+
+    if role not in("user", "admin"):
+        raise HTTPException(
+            status_code=401,
+            detail="forbidden"
+        )
+    
+    return role
     

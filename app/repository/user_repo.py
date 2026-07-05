@@ -20,7 +20,6 @@ def get_user_repo(db: Session):
     return  (
     db.query(User)
     .options(joinedload(User.role))
-    .first()
     )
 
 def edit_user_repo(db: Session, user_id: UUID, Users: EditUser):

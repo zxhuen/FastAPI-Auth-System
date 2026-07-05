@@ -6,12 +6,18 @@ from app.services.user_services import add_user_services, list_user_services, ed
 from uuid import UUID
 from app.services.permission import require_admin
 from fastapi.security import OAuth2PasswordRequestForm
+from app.schema.Roles import role_response
+from app.services.roles_services import get_roles_services      
 
 router = APIRouter(prefix="/Admin", tags=["Admin"], dependencies=[Depends(require_admin)])
 
 @router.get("/", response_model= list[UserResponse])
 def get_user(db: Session = Depends(get_db)):
     return list_user_services(db)
+
+@router.get("/getRoles")
+def get_roles(db: Session = Depends(get_db)):
+    return get_roles_services(db)
 
 @router.delete("/{user_id}", response_model=UserResponse)
 def delete_user(user_id: UUID, db: Session = Depends(get_db)):
@@ -29,3 +35,4 @@ def delete_user(user_id: UUID, db: Session = Depends(get_db)):
 @router.get("/{user_id}", response_model=UserResponse)
 def find_user_id(user_id: UUID, db: Session = Depends(get_db)):
     return find_user_id_services(db, user_id)
+
