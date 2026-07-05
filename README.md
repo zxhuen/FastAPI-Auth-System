@@ -49,8 +49,8 @@ This project is part of my backend development journey. The goal is to build a p
 
 - [x] Generate access tokens
 - [x] Verify JWT tokens
-- [ ] Protect private endpoints
-- [ ] Get current authenticated user
+- [x] Protect private endpoints
+- [x] Get current authenticated user
 
 ---
 
@@ -58,15 +58,15 @@ This project is part of my backend development journey. The goal is to build a p
 
 - [ ] Create refresh tokens
 - [ ] Generate new access tokens
-- [ ] Handle token expiration
+- [x] Handle token expiration
 
 ---
 
 ## 🛡️ Phase 6 — Authorization
 
-- [ ] User roles
-- [ ] Admin-only endpoints
-- [ ] Role-based access control
+- [x] User roles
+- [x] Admin-only endpoints
+- [x] Role-based access control
 
 ---
 
