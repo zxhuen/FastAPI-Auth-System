@@ -7,9 +7,13 @@ from pwdlib import PasswordHash
 from app.models.User import User
 from uuid import UUID
 from app.services.auth_services import create_access_token, decode_access_token
-
-
-
+from app.services.refresh_token import create_refresh_token
+from app.repository.refresh_token_repo import save_refresh_token
+from fastapi import Depends
+from app.core.database import get_db
+from datetime import datetime, timedelta, timezone
+from app.core.config import settings
+from uuid import uuid4
 
 password_hash = PasswordHash.recommended()
 
@@ -108,10 +112,22 @@ def login_services(db: Session, account: user_login):
     }
 
     generated_user_token = create_access_token(token_data)
-    ##generated_user_refresh_token = 
+
+    refresh_token_payload = {
+    "sub": str(user.id),
+    "iat": datetime.now(timezone.utc),
+    "exp": datetime.now(timezone.utc) + timedelta(days=settings.REFRESH_TOKEN_EXPIRE),
+    "jti": str(uuid4()),
+    "type": "refresh",
+    }
+
+    refresh_token = create_refresh_token(refresh_token_payload)
+
+    save_refresh_token(user, refresh_token_payload["jti"], refresh_token_payload["exp"], db)
 
     payload = {
         "access_token": generated_user_token,
+        "refresh_token": refresh_token,
         "token_type": "bearer" 
     }
 

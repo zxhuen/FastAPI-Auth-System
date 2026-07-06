@@ -12,7 +12,7 @@ class User(Base):
     role_id = Column(Integer, ForeignKey("roles.id"), nullable=False)
     role = relationship("Role", back_populates="users")
 
-    refresh_tokens = relationship("RefreshToken", back_populates="refresh_tokens")
+    refresh_tokens = relationship("RefreshToken", back_populates="user")
 
     username = Column(String(20), unique=True, nullable=False)
     email = Column(String(255), unique=True, nullable=False, index=True)

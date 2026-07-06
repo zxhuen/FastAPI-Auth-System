@@ -13,16 +13,6 @@ from app.core.config import settings
 from uuid import uuid4
 
 def create_refresh_token(data: dict):
-    to_enccode = data.copy()
-
-    expire = datetime.now(timezone.utc) + timedelta(days=settings.REFRESH_TOKEN_EXPIRE)
-
-    to_enccode.update({
-        "iat": datetime.now(timezone.utc),
-        "exp": datetime.now(timezone.utc) + timedelta(days=settings.REFRESH_TOKEN_EXPIRE),
-        "jti": str(uuid4())
-    })
-
-    token = jwt.encode(to_enccode, settings.SECRET, settings.ALGORITHM)
-
-    return token
+    to_copy = data.copy()
+    return  jwt.encode(to_copy, settings.SECRET, settings.ALGORITHM)
+    
