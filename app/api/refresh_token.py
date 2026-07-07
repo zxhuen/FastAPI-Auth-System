@@ -7,8 +7,10 @@ from uuid import UUID
 from app.services.permission import require_admin
 from fastapi.security import OAuth2PasswordRequestForm
 from app.services.permission import require_user
+from app.services.refresh_token import validate_refresh_token
 
 router = APIRouter(prefix="/Refresh", tags=["Refresh"])
 
 @router.post("/")
-def refresh_token(response: Response, refresh_token: str | None = Cookie(default=None)):
+def refresh(response: Response, refresh_token: str | None = Cookie(default=None), db: Session = Depends(get_db)):
+    return validate_refresh_token(db, response, refresh_token)

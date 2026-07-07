@@ -19,5 +19,5 @@ def save_refresh_token(user: User, jti: UUID, expires_at: datetime, db: Session)
     db.commit()
     db.refresh(refresh_token)
 
-def check_refresh_token_repo(db: Session, id: int, user_id: int):
-    return db.query(RefreshToken).filter(RefreshToken.id == id & RefreshToken.user_id == user_id).first()
+def check_refresh_token_repo(db: Session, jti: int):
+    return db.query(RefreshToken).filter(RefreshToken.jti == jti).first()

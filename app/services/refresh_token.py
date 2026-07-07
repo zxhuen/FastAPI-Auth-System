@@ -14,12 +14,14 @@ from uuid import uuid4
 from fastapi import Response
 from jose import jwt
 from jwt.exceptions import ExpiredSignatureError, InvalidTokenError
+from app.repository.refresh_token_repo import check_refresh_token_repo
+from app.models.RefreshToken import RefreshToken
 
 def create_refresh_token(data: dict):
     to_copy = data.copy()
     return  jwt.encode(to_copy, settings.SECRET, settings.ALGORITHM)
 
-def check_refresh_token(refresh_token: str):
+def check_refresh_token(refresh_token: str | None):
 
     if refresh_token is None:
         raise HTTPException(
@@ -36,20 +38,52 @@ def decode_refresh_token(refresh_token: str):
     except ExpiredSignatureError:
         raise HTTPException(
             status_code=401,
-            detail="Access token has expired"
+            detail="Refresh token has expired"
         )
     except InvalidTokenError:
         raise HTTPException(
             status_code=401,
-            detail="Invalid access token"
+            detail="Invalid refresh token"
         )
 
-def check_refresh_token_from_db(refresh_token: str):
+def check_refresh_token_from_db(db: Session, jti: UUID):
+    refresh_token = check_refresh_token_repo(db, jti)
 
-def generate_new_refresh_token(db: Session, response: Response, refresh_token: str):
+    if refresh_token is None:
+        raise HTTPException(
+            status_code=401,
+            detail="no refresh token found"
+        )
+    
+    return refresh_token
+    
+    
+def generate_new_refresh_token(user_id: UUID):
+
+    refresh_token_payload = {
+    "sub": str(user_id),
+    "iat": datetime.now(timezone.utc),
+    "exp": datetime.now(timezone.utc) + timedelta(days=settings.REFRESH_TOKEN_EXPIRE),
+    "jti": str(uuid4()),
+    "type": "refresh",
+    }
+
+def validate_refresh_token(db: Session, response: Response, refresh_token: str):
 
     check_refresh_token(refresh_token)
-    decoded_refresh_token = decode_refresh_token(refresh_token)
+
+    payload = decode_refresh_token(refresh_token)
+
+    
+    
+    db_token = check_refresh_token_from_db(db, payload["jti"])
+
+    return payload, db_token
+
+
+    
+
+
 
 
 
