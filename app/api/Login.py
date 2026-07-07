@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, Depends
+from fastapi import APIRouter, HTTPException, Response, Depends
 from sqlalchemy.orm import Session
 from app.core.database import get_db
 from app.schema.User import UserCreate, UserResponse, EditUser, user_login, current_user
@@ -11,19 +11,19 @@ from app.services.permission import require_user
 router = APIRouter(prefix="/Login", tags=["Login"])
 
 @router.post("/Login")
-def validate_account(account: user_login, db: Session = Depends(get_db)):
+def validate_account(account: user_login, response: Response, db: Session = Depends(get_db)):
     accountt = user_login(
         username=account.username,
         password=account.password,
     )
 
-    return login_services(db, accountt)
+    return login_services(db, accountt, response)
 
 @router.post("/LoginOauth")
-def validate_account_for_backend(account: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
+def validate_account_for_backend(response: Response, account: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
     accountt = user_login(
         username=account.username,
         password=account.password
     )
 
-    return login_services(db, accountt)
+    return login_services(db, accountt, response)

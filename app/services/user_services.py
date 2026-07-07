@@ -14,6 +14,7 @@ from app.core.database import get_db
 from datetime import datetime, timedelta, timezone
 from app.core.config import settings
 from uuid import uuid4
+from fastapi import Response
 
 password_hash = PasswordHash.recommended()
 
@@ -92,7 +93,7 @@ def delete_user_pagination_services(db: Session, skip: int, limit: int):
     
     return users
 
-def login_services(db: Session, account: user_login):
+def login_services(db: Session, account: user_login, response: Response):
     user = login_repo(db, account.username)
 
     if user is None:
@@ -124,6 +125,15 @@ def login_services(db: Session, account: user_login):
     refresh_token = create_refresh_token(refresh_token_payload)
 
     save_refresh_token(user, refresh_token_payload["jti"], refresh_token_payload["exp"], db)
+
+    response.set_cookie(
+        key="refresh_token",
+        value=refresh_token,
+        httponly=True, ##js cannot read this
+        secure=False, ##must be true, false for local testing (http)
+        samesite="lax", ##helps prevent csrf attacks
+        max_age=60 * 60 * 24 * 30 ##30 days, I'll sync stuff from env later
+    )
 
     payload = {
         "access_token": generated_user_token,
