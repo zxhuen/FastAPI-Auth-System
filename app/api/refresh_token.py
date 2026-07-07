@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, Response, Depends
+from fastapi import APIRouter, HTTPException, Response, Cookie, Depends
 from sqlalchemy.orm import Session
 from app.core.database import get_db
 from app.schema.User import UserCreate, UserResponse, EditUser, user_login, current_user
@@ -9,3 +9,6 @@ from fastapi.security import OAuth2PasswordRequestForm
 from app.services.permission import require_user
 
 router = APIRouter(prefix="/Refresh", tags=["Refresh"])
+
+@router.post("/")
+def refresh_token(response: Response, refresh_token: str | None = Cookie(default=None)):
