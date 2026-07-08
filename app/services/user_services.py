@@ -171,7 +171,7 @@ def get_current_user_session(db: Session, token: str):
 def search_user_services(db: Session, username: str):
     users = search_username_repo(db, username)
 
-    if users is None:
+    if not users:
         raise HTTPException(
             status_code=401,
             detail="user not found"
