@@ -73,7 +73,7 @@ This project is part of my backend development journey. The goal is to build a p
 ## 📈 Phase 7 — API Improvements
 
 - [x] Pagination
-- [ ] Search
+- [x] Search
 - [ ] Filtering
 - [ ] Sorting
 - [x] Consistent API responses

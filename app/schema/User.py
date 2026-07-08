@@ -55,3 +55,10 @@ class current_user(BaseModel):
         from_attributes = True
 
 
+class searchResponse(BaseModel):
+    username: str
+
+    class Config:
+        from_attributes = True
+
+

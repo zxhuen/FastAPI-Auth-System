@@ -87,3 +87,6 @@ def get_current_user_repo(db: Session, user_id: UUID):
 
     
     return current_user
+
+def search_username_repo(db: Session, username: str):
+    return db.query(User).filter(User.username == username)

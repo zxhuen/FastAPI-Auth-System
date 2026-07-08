@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from app.repository.user_repo import create_user_repo, get_user_repo, edit_user_repo, delete_user_repo, get_user_by_email_repo, get_user_by_username_repo, get_users_pagination_repo, login_repo, find_user_ID_repo, get_current_user_repo
+from app.repository.user_repo import create_user_repo, get_user_repo, edit_user_repo, delete_user_repo, get_user_by_email_repo, get_user_by_username_repo, get_users_pagination_repo, login_repo, find_user_ID_repo, get_current_user_repo, search_username_repo
 from app.schema.User import UserCreate, UserResponse, EditUser, user_login
 from fastapi import HTTPException
 from sqlalchemy.exc import IntegrityError
@@ -167,6 +167,17 @@ def get_current_user_session(db: Session, token: str):
         )
     
     return current_user
+
+def search_user_services(db: Session, username: str):
+    users = search_username_repo(db, username)
+
+    if users is None:
+        raise HTTPException(
+            status_code=401,
+            detail="user not found"
+        )
+    
+    return users
 
 
     
