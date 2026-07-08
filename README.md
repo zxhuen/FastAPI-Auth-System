@@ -74,8 +74,8 @@ This project is part of my backend development journey. The goal is to build a p
 
 - [x] Pagination
 - [x] Search
-- [ ] Filtering
-- [ ] Sorting
+- [x] Filtering
+- [x] Sorting
 - [x] Consistent API responses
 - [x] Better error handling
 
