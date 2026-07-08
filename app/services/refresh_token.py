@@ -16,6 +16,7 @@ from jose import jwt
 from jwt.exceptions import ExpiredSignatureError, InvalidTokenError
 from app.repository.refresh_token_repo import check_refresh_token_repo
 from app.models.RefreshToken import RefreshToken
+from app.services.auth_services import create_access_token
 
 def create_refresh_token(data: dict):
     to_copy = data.copy()
@@ -78,7 +79,16 @@ def validate_refresh_token(db: Session, response: Response, refresh_token: str):
     
     db_token = check_refresh_token_from_db(db, payload["jti"])
 
-    return payload, db_token
+    payload = {
+        "sub": payload["sub"]
+    }
+
+    new_access_token = create_access_token(payload)
+
+    return payload, db_token, new_access_token
+    
+
+
 
 
     
