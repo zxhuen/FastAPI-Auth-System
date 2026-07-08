@@ -79,13 +79,19 @@ def validate_refresh_token(db: Session, response: Response, refresh_token: str):
     
     db_token = check_refresh_token_from_db(db, payload["jti"])
 
-    payload = {
+    if db_token.user_id != payload["sub"]:
+        raise HTTPException(
+            status_code=401,
+            detail="forbidden"
+        )
+
+    access_payload = {
         "sub": payload["sub"]
     }
 
-    new_access_token = create_access_token(payload)
+    new_access_token = create_access_token(access_payload)
 
-    return payload, db_token, new_access_token
+    return new_access_token
     
 
 

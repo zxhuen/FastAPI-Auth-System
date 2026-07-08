@@ -56,8 +56,8 @@ This project is part of my backend development journey. The goal is to build a p
 
 ## 🔄 Phase 5 — Refresh Tokens
 
-- [ ] Create refresh tokens
-- [ ] Generate new access tokens
+- [x] Create refresh tokens
+- [x] Generate new access tokens
 - [x] Handle token expiration
 
 ---
@@ -76,8 +76,8 @@ This project is part of my backend development journey. The goal is to build a p
 - [ ] Search
 - [ ] Filtering
 - [ ] Sorting
-- [ ] Consistent API responses
-- [ ] Better error handling
+- [x] Consistent API responses
+- [x] Better error handling
 
 ---
 
