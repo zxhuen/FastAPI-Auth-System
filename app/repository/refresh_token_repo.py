@@ -7,6 +7,7 @@ from sqlalchemy.orm import joinedload
 from datetime import datetime, timedelta, timezone
 from app.models.RefreshToken import RefreshToken
 from app.models.RefreshToken import RefreshToken
+from fastapi import HTTPException
 
 def save_refresh_token(user: User, jti: UUID, expires_at: datetime, db: Session):
     refresh_token = RefreshToken(
@@ -16,8 +17,18 @@ def save_refresh_token(user: User, jti: UUID, expires_at: datetime, db: Session)
     )
 
     db.add(refresh_token)
-    db.commit()
-    db.refresh(refresh_token)
+    
 
-def check_refresh_token_repo(db: Session, jti: int):
+def check_refresh_token_repo(db: Session, jti: UUID):
     return db.query(RefreshToken).filter(RefreshToken.jti == jti).first()
+
+def delete_refresh_token_repo(db: Session, jti: UUID):
+    token = db.query(RefreshToken).filter(RefreshToken.jti == jti).first()
+
+    if token is None:
+        raise HTTPException(status_code=401, detail="Invalid refresh token")
+
+    db.delete(token)
+
+def get_user_from_db(db: Session, user_id: UUID):
+    return db.query(User).filter(User.id == user_id).first()

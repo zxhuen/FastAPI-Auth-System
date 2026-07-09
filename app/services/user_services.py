@@ -125,6 +125,7 @@ def login_services(db: Session, account: user_login, response: Response):
     refresh_token = create_refresh_token(refresh_token_payload)
 
     save_refresh_token(user, refresh_token_payload["jti"], refresh_token_payload["exp"], db)
+    db.commit()
 
     response.set_cookie(
         key="refresh_token",
