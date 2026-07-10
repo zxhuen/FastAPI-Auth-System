@@ -9,7 +9,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 
 router = APIRouter(prefix="/User", tags=["User"], dependencies=[Depends(require_user)])
 
-@router.post("/", response_model=UserResponse)
+@router.post("/")
 def add_user(user: UserCreate, db: Session = Depends(get_db)):
     return add_user_services(db, user)
 

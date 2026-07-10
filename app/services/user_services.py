@@ -15,6 +15,7 @@ from datetime import datetime, timedelta, timezone
 from app.core.config import settings
 from uuid import uuid4
 from fastapi import Response
+from app.services.email_verification import generate_verification_token
 
 password_hash = PasswordHash.recommended()
 
@@ -46,7 +47,16 @@ def add_user_services(db: Session, Create: UserCreate):
             hashed_password = hashed_password
         )
 
-        return create_user_repo(db, new_user)
+        user = create_user_repo(db, new_user)
+
+        verification_token = generate_verification_token(user.id)
+
+        
+        return {
+            "message": "User created successfully.",
+            "verification_token": verification_token
+        }
+        
     except IntegrityError:
         db.rollback()
         raise HTTPException(

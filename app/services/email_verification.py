@@ -51,12 +51,6 @@ def verify_email(token: str, db: Session):
         )
     
     user = get_current_user_repo(db, decoded_payload["sub"])
-
-    if user is None:
-        raise HTTPException(
-            status_code=404,
-            detail="user not found"
-        )
     
     if user.is_verified:
         raise HTTPException(
