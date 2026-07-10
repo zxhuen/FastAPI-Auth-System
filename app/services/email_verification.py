@@ -13,6 +13,10 @@ from app.core.config import settings
 from uuid import uuid4
 from fastapi import Response
 from jose import jwt, ExpiredSignatureError, JWTError
+import resend
+
+
+resend.api_key = settings.RESEND_API_KEY
 
 def generate_verification_token(user_id: UUID):
 
@@ -70,6 +74,30 @@ def verify_email(token: str, db: Session):
 
     return {"detail": "Verification successful."}
     
+
+def send_verification_email(email: str, token: str):
+    verification_link = (
+        f"http://localhost:8000/auth/verify-email?token={token}"
+    )
+
+    resend.Emails.send({
+        "from": "onboarding@resend.dev",
+        "to": [email],
+        "subject": "Verify your email",
+        "html": f"""
+        <h2>Welcome!</h2>
+
+        <p>Thanks for registering.</p>
+
+        <p>
+            <a href="{verification_link}">
+                Verify Email
+            </a>
+        </p>
+
+        <p>This link expires in 24 hours.</p>
+        """
+    })
 
 
     

@@ -20,3 +20,4 @@ python-jose==3.5.0
 python-multipart
 
 pwdlib
+resend

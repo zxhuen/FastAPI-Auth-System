@@ -15,7 +15,7 @@ from datetime import datetime, timedelta, timezone
 from app.core.config import settings
 from uuid import uuid4
 from fastapi import Response
-from app.services.email_verification import generate_verification_token
+from app.services.email_verification import generate_verification_token, send_verification_email
 
 password_hash = PasswordHash.recommended()
 
@@ -51,10 +51,11 @@ def add_user_services(db: Session, Create: UserCreate):
 
         verification_token = generate_verification_token(user.id)
 
+        send_verification_email(user.email, verification_token)
+
         
         return {
-            "message": "User created successfully.",
-            "verification_token": verification_token
+            "message": "Registration successfully."
         }
         
     except IntegrityError:
