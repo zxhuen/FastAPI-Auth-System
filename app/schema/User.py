@@ -61,4 +61,10 @@ class searchResponse(BaseModel):
     class Config:
         from_attributes = True
 
+class reset_password(BaseModel):
+    password: str = Field(
+        min_length=8,
+        max_length=128
+    )
+
 
