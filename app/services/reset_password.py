@@ -17,7 +17,35 @@ from uuid import uuid4
 from fastapi import Response
 from app.services.email_verification import generate_verification_token, send_verification_email
 from app.repository.reset_password import get_user_through_email
+from jose import jwt
+from jwt.exceptions import ExpiredSignatureError, InvalidTokenError
+import secrets
+from app.models.resetPassword import PasswordResetToken
+import hashlib
 
 
-def reset_password(db: Session, email: str):
-    validate_email = get_user_through_email(db, email)
+
+def forgot_password(db: Session, email: str):
+    user = get_user_through_email(db, email)
+
+    if user is None:
+        return
+
+    token = secrets.token_urlsafe(32)
+
+    hashed_token = hashlib.sha256(token.encode()).hexdigest()
+
+    reset_token = PasswordResetToken(
+        user_id = user.id,
+        token = hashed_token,
+        expires_at = datetime.now(timezone.utc) + timedelta(minutes=30)
+    )
+
+    db.add(reset_token)
+    db.commit()
+
+    return token
+
+    
+
+    
