@@ -5,6 +5,7 @@ from uuid import UUID
 from pwdlib import PasswordHash
 from sqlalchemy.orm import joinedload
 
+
 password_hash = PasswordHash.recommended()
 
 def create_user_repo(db: Session, Users: User):
