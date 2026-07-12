@@ -83,16 +83,15 @@ This project is part of my backend development journey. The goal is to build a p
 
 ## ✉️ Phase 8 — Account Management
 
-- [ ] Email verification
-- [ ] Password reset
-- [ ] Change password
-- [ ] Update profile
+- [x] Email verification
+- [x] Password reset
+- [x] Change password
 
 ---
 
 ## 🚀 Phase 9 — Production Features
 
-- [ ] Environment configuration
+- [x] Environment configuration
 - [ ] Logging
 - [ ] Rate limiting
 - [ ] Testing

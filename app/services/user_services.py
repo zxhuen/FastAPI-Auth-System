@@ -190,11 +190,3 @@ def search_user_services(db: Session, username: str):
         )
     
     return users
-
-
-    
-
-
-
-    
-
