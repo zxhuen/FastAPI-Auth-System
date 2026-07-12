@@ -7,6 +7,7 @@ from app.api.Admin import router as adminRouter
 from app.api.Login import router as loginRouter
 from app.api.refresh_token import router as refreshRouter
 from app.api.auth import router as authRouter
+from app.api.forget_password import router as forgetPasswordRouter
 
 app = FastAPI(title="Registration")
 
@@ -15,3 +16,4 @@ app.include_router(adminRouter)
 app.include_router(userRouter)
 app.include_router(refreshRouter)
 app.include_router(authRouter)
+app.include_router(forgetPasswordRouter)

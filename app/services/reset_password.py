@@ -65,10 +65,10 @@ def forgot_password(db: Session, email: str):
     }
 
 def send_email(email: str, token: str):
-    link = f"http://localhost:8000/auth/validate-token?token={token}"
+    link = f"http://localhost:8000/forget-password/verify-token?token={token}"
 
     resend.Emails.send({
-        "from": "zxhuen324@gmail.dev",
+        "from": "onboarding@resend.dev",
         "to": [email],
         "subject": "Reset your password",
         "html": f"""
