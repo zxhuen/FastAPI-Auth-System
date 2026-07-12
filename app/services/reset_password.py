@@ -16,7 +16,7 @@ from app.core.config import settings
 from uuid import uuid4
 from fastapi import Response
 from app.services.email_verification import generate_verification_token, send_verification_email
-from app.repository.reset_password import get_user_through_email, get_token
+from app.repository.reset_password import get_user_through_email, get_token, remove_duplicate, delete_refresh_tokens
 from jose import jwt
 from jwt.exceptions import ExpiredSignatureError, InvalidTokenError
 import secrets
@@ -26,11 +26,11 @@ import resend
 
 resend.api_key = settings.RESEND_API_KEY
 
+password_hash = PasswordHash.recommended()
+
 def forgot_password(db: Session, email: str):
     user = get_user_through_email(db, email)
 
-    if user is None:
-        return
 
     token = secrets.token_urlsafe(32)
 
@@ -41,14 +41,31 @@ def forgot_password(db: Session, email: str):
         token = hashed_token,
         expires_at = datetime.now(timezone.utc) + timedelta(minutes=30)
     )
+    remove_duplicate(db, user.id)
 
-    db.add(reset_token)
-    db.commit()
+    try:
+        db.add(reset_token)
+        db.commit()
+    except Exception:
+        db.rollback()
+        return
+    
+    try:
+        send_email(email, token)
+    except Exception:
+        db.delete(reset_token)
+        db.commit()
+        raise
 
-    return token
+
+    
+
+    return token, {
+    "message": "If an account with that email exists, a password reset link has been sent."
+    }
 
 def send_email(email: str, token: str):
-    link = f"http://localhost:8000/auth/validate_token?token={token}"
+    link = f"http://localhost:8000/auth/validate-token?token={token}"
 
     resend.Emails.send({
         "from": "zxhuen324@gmail.dev",
@@ -102,6 +119,7 @@ def send_email(email: str, token: str):
         """
     })
 
+##will call on validate-token api
 def password_reset_verification(db: Session, token: str):
     hashed_token = hashlib.sha256(token.encode()).hexdigest()
     token_from_db = get_token(db, hashed_token)
@@ -122,9 +140,31 @@ def password_reset_verification(db: Session, token: str):
         detail="Reset token has expired."
     )
 
-    return {"message": "proceed to reset password and put this token there" + token_from_db.token}
+    return token_from_db
 
-##def password_reset(token: str, db: Session)
+
+def password_reset(token: str, password: reset_password, db: Session):
+    
+    token_from_db = password_reset_verification(db, token)
+    
+    user = find_user_ID_repo(db, token_from_db.user_id)
+
+    try:
+        user.hashed_password = password_hash.hash(password.password)
+        token_from_db.used = True
+        delete_refresh_tokens(db, user.id)
+        db.commit()
+    except Exception:
+        db.rollback()
+        return
+    
+    return {
+    "message": "Password changed successfully."
+    }
+    
+
+    
+
 
 
 
