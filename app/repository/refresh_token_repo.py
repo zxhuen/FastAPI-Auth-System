@@ -12,7 +12,7 @@ from fastapi import HTTPException
 def save_refresh_token(user: User, jti: UUID, expires_at: datetime, db: Session):
     refresh_token = RefreshToken(
         user_id = user.id,
-        jti = jti,
+        jti = UUID(jti),
         expires_at = expires_at
     )
 
