@@ -17,10 +17,19 @@ def test_get_roles(client, seed_roles):
 
     assert response.status_code == 200
 
-def test_delete_user(client, add_user_for_delete):
-    id = add_user_for_delete
+def test_delete_user(client, add_user):
+    id = add_user
 
     response = client.delete(
+        f"/Admin/{id}"
+    )
+
+    assert response.status_code == 200
+
+def test_edit_user(client, add_user):
+    id = add_user
+
+    response = client.get(
         f"/Admin/{id}"
     )
 

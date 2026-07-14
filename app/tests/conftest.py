@@ -44,7 +44,7 @@ def seed_roles(db):
     db.commit()
 
 @pytest.fixture
-def add_user_for_delete(db):
+def add_user(db):
         user = User(
             username="DeleteMe",
             role_id = 1,
