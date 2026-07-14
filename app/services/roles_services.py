@@ -16,7 +16,7 @@ def get_roles_services(db: Session):
     if not roles:
         raise HTTPException(
             status_code=404,
-            detail="no user found"
+            detail="no roles found"
         )
     
     return roles    
