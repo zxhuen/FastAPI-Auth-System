@@ -44,10 +44,10 @@ def edit_user_repo(db: Session, user_id: UUID, Users: EditUser):
 
 
 def delete_user_repo(db: Session, user_id: UUID):
-    user = db.query(User)\
-    .options(joinedload(User.role))\
-    .filter(User.id == user_id)\
-    .first()
+    user = db.query(User).options(joinedload(User.role)).filter(User.id == user_id).first()
+    
+    
+    
     
     db.delete(user)
     db.commit()
