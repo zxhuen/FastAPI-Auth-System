@@ -25,4 +25,14 @@ def test_get_current_user(client, add_user):
 def test_edit_user(client, add_user):
     user_id = add_user
 
-    
+    response = client.put(
+        f"User/{user_id}",
+        json={
+            "username": "qFLyBXskFf0KULC2RwOk"
+        }
+    )
+
+    assert response.status_code == 200
+
+
+

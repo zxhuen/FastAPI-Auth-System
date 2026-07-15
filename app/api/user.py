@@ -9,11 +9,6 @@ from fastapi.security import OAuth2PasswordRequestForm
 
 router = APIRouter(prefix="/User", tags=["User"], dependencies=[Depends(require_user)])
 
-@router.post("/")
-def add_user(user: UserCreate, db: Session = Depends(get_db)):
-    return add_user_services(db, user)
-
-
 
 @router.get("/pagination", response_model=list[UserResponse])
 def get_users_pagination(skip: int, limit: int, db: Session = Depends(get_db)):

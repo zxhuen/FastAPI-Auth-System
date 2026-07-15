@@ -33,8 +33,7 @@ def edit_user_repo(db: Session, user_id: UUID, Users: EditUser):
     if user_from_db is None:
         return None
     
-    user_from_db.username = Users.username
-    user_from_db.email = Users.email    
+    user_from_db.username = Users.username   
     
 
     db.commit()
