@@ -1,38 +1,23 @@
-"""
-def test_register(client):
-    response = client.post(
-        "/Register",
-        json={
-            "username": "ZxhuenZxhuen",
-            "email": "zxhuen324@gmail.com",
-            "hashed_password": "ZxhuenZxhuen"
-        }
-    )
+from app.services.auth_services import create_access_token, decode_access_token
 
-    assert response.status_code == 201
-
-
-
-
-def test_login(client):
-
-    response = client.post(
-        "/Login/Login",
-        json={
-            "username": "ZxhuenZxhuen",
-            "password": "ZxhuenZxhuen"
-        }
+def test_user_pagination(client, add_user):
+    response = client.get(
+        "User/pagination?skip=0&limit=1"
     )
 
     assert response.status_code == 200
 
-    print(response.status_code)
-    print(response.json())
+def test_get_current_user(client, add_user):
+    user_id = add_user
 
-    resp = response.json()
+    token_data = {
+        "sub": str(user_id)
+    }
 
-    assert "access_token" in resp
-    assert resp["token_type"] == "bearer"
-    
-"""
+    token = create_access_token(token_data)
 
+    response = client.get(
+        f"User/getCurretnUser?token={token}"
+    )
+
+    assert response.status_code == 200

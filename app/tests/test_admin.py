@@ -26,7 +26,7 @@ def test_delete_user(client, add_user):
 
     assert response.status_code == 200
 
-def test_edit_user(client, add_user):
+def test_find_user_id(client, add_user):
     id = add_user
 
     response = client.get(

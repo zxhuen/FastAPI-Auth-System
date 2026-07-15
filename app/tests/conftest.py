@@ -8,7 +8,8 @@ from app.main import app
 from app.core.database import Base, get_db
 from app.services.permission import require_admin, require_user 
 from app.models.Role import Role
-from app.models.User import User    
+from app.models.User import User   
+from app.models.RefreshToken import RefreshToken 
 
 SQLALCHEMY_DATABASE_URL = "sqlite:///./test.db"
 
@@ -28,6 +29,14 @@ def create_test_database():
     Base.metadata.create_all(bind=engine)
     yield
     Base.metadata.drop_all(bind=engine)
+
+@pytest.fixture(autouse=True)
+def cleanup(db):
+    yield
+
+    ##db.query(RefreshToken).delete()
+    db.query(User).delete()
+    db.commit()
 
 @pytest.fixture
 def db():
@@ -57,6 +66,9 @@ def add_user(db):
         db.refresh(user)
 
         return user.id
+
+
+
 
 @pytest.fixture
 def client(db):

@@ -168,7 +168,8 @@ def find_user_id_services(db: Session, user_id: UUID):
 
 def get_current_user_session(db: Session, token: str):
     validated_token = decode_access_token(token)
-    current_user = get_current_user_repo(db, validated_token['sub'])
+
+    current_user = get_current_user_repo(db, UUID(validated_token['sub']))
 
    
 
