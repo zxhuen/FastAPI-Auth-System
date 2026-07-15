@@ -34,5 +34,12 @@ def test_edit_user(client, add_user):
 
     assert response.status_code == 200
 
+def test_searh_user(client, add_user):
+    response = client.get(
+        "User/DeleteMe"
+    )
+
+    assert response.status_code == 200
+
 
 
