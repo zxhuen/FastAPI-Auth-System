@@ -21,3 +21,8 @@ def test_get_current_user(client, add_user):
     )
 
     assert response.status_code == 200
+
+def test_edit_user(client, add_user):
+    user_id = add_user
+
+    

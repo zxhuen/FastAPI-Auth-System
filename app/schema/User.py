@@ -36,7 +36,6 @@ class EditUser(BaseModel):
         max_length=20,
         pattern=r"^[a-zA-Z0-9_]+$"
     )
-    email: EmailStr
 
 class user_login(BaseModel):
     username: str
