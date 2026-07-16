@@ -10,6 +10,8 @@ from app.services.permission import require_admin, require_user
 from app.models.Role import Role
 from app.models.User import User   
 from app.models.RefreshToken import RefreshToken 
+from app.services.refresh_token import generate_new_refresh_token, create_refresh_token
+from uuid import UUID
 
 SQLALCHEMY_DATABASE_URL = "sqlite:///./test.db"
 
@@ -34,7 +36,7 @@ def create_test_database():
 def cleanup(db):
     yield
 
-    ##db.query(RefreshToken).delete()
+    db.query(RefreshToken).delete()
     db.query(User).delete()
     db.commit()
 
@@ -67,6 +69,21 @@ def add_user(db):
 
         return user.id
 
+@pytest.fixture
+def add_refresh_token(db):
+    user_id = add_user
+    refresh = generate_new_refresh_token(user_id)
+    jwt_refresh = create_refresh_token(refresh)
+
+    refresh_token = RefreshToken(
+        user_id = user_id,
+        jti = UUID(refresh["jti"]),
+        expires_at = refresh["exp"]
+    )
+
+    db.commit()
+
+    return jwt_refresh
 
 
 
