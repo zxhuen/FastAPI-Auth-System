@@ -54,7 +54,7 @@ def verify_email(token: str, db: Session):
             detail="Invalid verification token"
         )
     
-    user = get_current_user_repo(db, decoded_payload["sub"])
+    user = get_current_user_repo(db, UUID(decoded_payload["sub"]))
     
     if user.is_verified:
         raise HTTPException(

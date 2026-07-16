@@ -88,10 +88,10 @@ def validate_refresh_token(db: Session, response: Response, refresh_token: str):
     check_refresh_token(refresh_token)
 
     payload = decode_refresh_token(refresh_token)
-
+    jti = UUID(payload["jti"])
     
     
-    db_token = check_refresh_token_from_db(db, payload["jti"])
+    db_token = check_refresh_token_from_db(db, jti)
 
     check_refresh_token_expiration(db_token)
 

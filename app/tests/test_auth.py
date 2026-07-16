@@ -1,3 +1,5 @@
+from app.services.email_verification import generate_verification_token
+
 """
 def test_register(client):
     response = client.post(
@@ -36,3 +38,13 @@ def test_login(client):
     
 """
 
+def test_verify_email(client, add_user):
+    user_id = add_user
+
+    token = generate_verification_token(user_id)
+
+    response = client.get(
+        f"auth/verify-email?token={token}"
+    )
+
+    assert response.status_code == 200

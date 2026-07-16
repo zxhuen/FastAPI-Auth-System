@@ -4,6 +4,8 @@ uvicorn[standard]
 sqlalchemy
 psycopg2-binary
 
+psycopg[binary]
+
 python-dotenv
 
 pydantic
@@ -21,3 +23,5 @@ python-multipart
 
 pwdlib
 resend
+
+pytest pytest-asyncio httpx

@@ -13,11 +13,10 @@ from app.models.RefreshToken import RefreshToken
 from app.services.refresh_token import generate_new_refresh_token, create_refresh_token
 from uuid import UUID
 
-SQLALCHEMY_DATABASE_URL = "sqlite:///./test.db"
+SQLALCHEMY_DATABASE_URL = "postgresql+psycopg://postgres:postgres@localhost:5432/test_db"
 
 engine = create_engine(
-    SQLALCHEMY_DATABASE_URL,
-    connect_args={"check_same_thread": False}
+    SQLALCHEMY_DATABASE_URL
 )
 
 TestingSessionLocal = sessionmaker(
@@ -70,7 +69,7 @@ def add_user(db):
         return user.id
 
 @pytest.fixture
-def add_refresh_token(db):
+def add_refresh_token(db, add_user):
     user_id = add_user
     refresh = generate_new_refresh_token(user_id)
     jwt_refresh = create_refresh_token(refresh)
@@ -81,7 +80,12 @@ def add_refresh_token(db):
         expires_at = refresh["exp"]
     )
 
-    db.commit()
+    try:
+        db.add(refresh_token)
+        db.commit()
+    except Exception:
+        db.rollback()
+        return
 
     return jwt_refresh
 
