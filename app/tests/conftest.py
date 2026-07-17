@@ -12,6 +12,10 @@ from app.models.User import User
 from app.models.RefreshToken import RefreshToken 
 from app.services.refresh_token import generate_new_refresh_token, create_refresh_token
 from uuid import UUID
+from app.models.resetPassword import PasswordResetToken
+from datetime import timedelta, datetime, timezone  
+import hashlib
+import secrets
 
 SQLALCHEMY_DATABASE_URL = "postgresql+psycopg://postgres:postgres@localhost:5432/test_db"
 
@@ -36,7 +40,9 @@ def cleanup(db):
     yield
 
     db.query(RefreshToken).delete()
+    db.query(PasswordResetToken).delete()
     db.query(User).delete()
+    
     db.commit()
 
 @pytest.fixture
@@ -54,10 +60,22 @@ def seed_roles(db):
     db.commit()
 
 @pytest.fixture
-def add_user(db):
+def add_role(db):
+    role = db.query(Role).filter(Role.name == "user").first()
+
+    if role is None:
+        role = Role(name="user")
+        db.add(role)
+        db.commit()
+        db.refresh(role)
+
+    return role
+
+@pytest.fixture
+def add_user(db, add_role):
         user = User(
             username="DeleteMe",
-            role_id = 1,
+            role_id = add_role.id,
             email="delete@example.com",
             hashed_password="testtestetest"
         )
@@ -88,6 +106,33 @@ def add_refresh_token(db, add_user):
         return
 
     return jwt_refresh
+
+@pytest.fixture
+def add_reset_password_token(db, add_user):
+    user_id = add_user
+
+    token = secrets.token_urlsafe(32)
+
+    hashed_token = hashlib.sha256(token.encode()).hexdigest()
+
+    reset_token = PasswordResetToken(
+        user_id = user_id,
+        token = hashed_token,
+        expires_at = datetime.now(timezone.utc) + timedelta(minutes=30)
+    )
+
+    try:
+        db.add(reset_token)
+        db.commit()
+    except Exception:
+        db.rollback()
+        return
+    
+    return token
+
+
+
+
 
 
 
