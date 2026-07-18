@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from contextlib import asynccontextmanager
+import app.core.logger
 
 from app.core.database import engine, Base
 from app.api.user import router as userRouter
@@ -14,6 +15,7 @@ from app.core.limiter import limiter
 from slowapi import _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
 from slowapi.middleware import SlowAPIMiddleware
+
 
 app = FastAPI(title="Registration")
 

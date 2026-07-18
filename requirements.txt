@@ -27,3 +27,4 @@ resend
 pytest pytest-asyncio httpx
 
 slowapi
+rich
