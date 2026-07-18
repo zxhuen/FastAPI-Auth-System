@@ -93,7 +93,7 @@ This project is part of my backend development journey. The goal is to build a p
 
 - [x] Environment configuration
 - [ ] Logging
-- [ ] Rate limiting
+- [x] Rate limiting
 - [x] Testing
 - [ ] Docker
 - [ ] CI/CD
