@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, Depends
+from fastapi import APIRouter, HTTPException, Request, Depends
 from sqlalchemy.orm import Session
 from app.core.database import get_db
 from app.schema.User import UserCreate, UserResponse, EditUser, user_login, current_user, searchResponse
@@ -6,9 +6,11 @@ from app.services.user_services import add_user_services, list_user_services, ed
 from uuid import UUID
 from app.services.permission import require_user    
 from fastapi.security import OAuth2PasswordRequestForm
+from app.core.limiter import limiter
 
 router = APIRouter(prefix="/Register", tags=["Register"])
 
 @router.post("/", status_code=201)
-def add_user(user: UserCreate, db: Session = Depends(get_db)):
+@limiter.limit("2/minute")
+def add_user(request: Request, user: UserCreate, db: Session = Depends(get_db)):
     return add_user_services(db, user)

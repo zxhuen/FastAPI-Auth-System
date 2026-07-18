@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, Response, Depends
+from fastapi import APIRouter, HTTPException, Response, Request, Depends
 from sqlalchemy.orm import Session
 from app.core.database import get_db
 from app.schema.User import UserCreate, UserResponse, EditUser, user_login, current_user, reset_password
@@ -9,17 +9,20 @@ from fastapi.security import OAuth2PasswordRequestForm
 from app.services.permission import require_user
 from app.services.email_verification import verify_email
 from app.services.reset_password import forgot_password, password_reset, password_reset_verification
-
+from app.core.limiter import limiter
 router = APIRouter(prefix="/forget-password", tags=["forget-password"])
 
 @router.post("/")
-def forget_password(email: str, db: Session = Depends(get_db)):
+@limiter.limit("2/minute")
+def forget_password(request: Request, email: str, db: Session = Depends(get_db)):
     return forgot_password(db, email)
 
 @router.get("/verify-token")
-def verify_token(token: str, db: Session = Depends(get_db)):
+@limiter.limit("2/minute")
+def verify_token(request: Request, token: str, db: Session = Depends(get_db)):
     return password_reset_verification(db, token)
 
 @router.post("/validate-token")
-def change_password(token: str, password: reset_password, db: Session = Depends(get_db)):
+@limiter.limit("2/minute")
+def change_password(request: Request, token: str, password: reset_password, db: Session = Depends(get_db)):
     return password_reset(token, password, db)

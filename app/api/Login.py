@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, Response, Depends
+from fastapi import APIRouter, HTTPException, Response, Request, Depends
 from sqlalchemy.orm import Session
 from app.core.database import get_db
 from app.schema.User import UserCreate, UserResponse, EditUser, user_login, current_user
@@ -7,11 +7,12 @@ from uuid import UUID
 from app.services.permission import require_admin
 from fastapi.security import OAuth2PasswordRequestForm
 from app.services.permission import require_user
-
+from app.core.limiter import limiter
 router = APIRouter(prefix="/Login", tags=["Login"])
 
 @router.post("/Login")
-def validate_account(account: user_login, response: Response, db: Session = Depends(get_db)):
+@limiter.limit("2/minute")
+def validate_account(request: Request, account: user_login, response: Response, db: Session = Depends(get_db)):
     accountt = user_login(
         username=account.username,
         password=account.password,
@@ -20,7 +21,8 @@ def validate_account(account: user_login, response: Response, db: Session = Depe
     return login_services(db, accountt, response)
 
 @router.post("/LoginOauth")
-def validate_account_for_backend(response: Response, account: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
+@limiter.limit("2/minute")
+def validate_account_for_backend(request: Request, response: Response, account: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
     accountt = user_login(
         username=account.username,
         password=account.password

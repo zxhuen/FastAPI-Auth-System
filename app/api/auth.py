@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, Response, Depends
+from fastapi import APIRouter, HTTPException, Response, Request, Depends
 from sqlalchemy.orm import Session
 from app.core.database import get_db
 from app.schema.User import UserCreate, UserResponse, EditUser, user_login, current_user
@@ -8,9 +8,11 @@ from app.services.permission import require_admin
 from fastapi.security import OAuth2PasswordRequestForm
 from app.services.permission import require_user
 from app.services.email_verification import verify_email
+from app.core.limiter import limiter
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
 @router.get("/verify-email")
-def verify_user_email(token: str, db: Session = Depends(get_db)):
+@limiter.limit("2/minute")
+def verify_user_email(request: Request, token: str, db: Session = Depends(get_db)):
     return verify_email(token, db)
